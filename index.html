@@ -3,634 +3,188 @@
 <head>
   <meta charset="UTF-8">
   <title>Het Scheldwiel</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #1a1a1a;
-      color: #e0e0e0;
-      margin: 0;
-      padding: 20px;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f5f5f5;
     }
-    body:not(.dark-mode) {
-      background-color: #f0f4f8;
-      color: #333;
-    }
-    #theme-toggle {
-      position: fixed;
-      top: 10px;
-      right: 10px;
-      font-size: 14px;
-      background-color: #333;
-      color: white;
-      border: 1px solid white;
-      border-radius: 5px;
-      padding: 4px 8px;
-      width: auto;
-      max-width: 150px;
-      white-space: nowrap;
-      cursor: pointer;
-      z-index: 1000;
-    }
-    body:not(.dark-mode) #theme-toggle {
-      background-color: #f0f0f0;
-      color: #333;
-      border: 1px solid #333;
-    }
-    #spel, #woordenlijst {
-      display: inline-block;
-      vertical-align: top;
-      width: 45%;
-      margin: 10px;
+    h1 {
+      margin-top: 20px;
     }
     .circle-container {
       position: relative;
-      width: 250px;
-      height: 250px;
-      margin: 0 auto 10px auto;
+      width: 500px;   /* groter wiel */
+      height: 500px;
+      margin: 30px auto;
     }
     .letter {
       position: absolute;
-      width: 50px;
-      height: 50px;
-      background-color: #333;
+      width: 36px;    /* kleinere knoppen */
+      height: 36px;
+      line-height: 36px;
       border-radius: 50%;
-      font-size: 24px;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transform: translate(-50%, -50%);
-      transition: background-color 0.3s;
+      background: #fff;
+      border: 2px solid #333;
+      text-align: center;
+      font-size: 18px;
       cursor: pointer;
-      color: #eee;
     }
-    body:not(.dark-mode) .letter {
-      background-color: #f0f0f0;
-      color: #333;
-    }
-    .center {
-      top: 50%;
-      left: 50%;
-      background-color: #3399cc;
-    }
-    body:not(.dark-mode) .center {
-      background-color: #66ccff;
-    }
-    .circle-container .letter:not(.center) {
-      top: calc(50% + 90px * sin(var(--angle)));
-      left: calc(50% + 90px * cos(var(--angle)));
-    }
-    .highlight {
-      background-color: #d4a900 !important;
-    }
-    body:not(.dark-mode) .highlight {
-      background-color: #ffcc00 !important;
-    }
-    input, button {
-      padding: 10px;
-      font-size: 16px;
-      margin: 5px;
-      width: 80%;
-      background-color: #2a2a2a;
-      color: #e0e0e0;
-      border: 1px solid #555;
-    }
-    body:not(.dark-mode) input, body:not(.dark-mode) button {
-      background-color: white;
-      color: black;
-      border: 1px solid #ccc;
+    #invoer {
+      margin-top: 20px;
+      font-size: 18px;
+      padding: 5px;
     }
     #resultaat {
-      font-size: 18px;
+      margin-top: 10px;
       font-weight: bold;
-      color: #ffcc66;
-      margin: 10px auto;
-      text-align: center;
     }
-    body:not(.dark-mode) #resultaat {
-      color: #cc8800;
+    #totaal {
+      margin-top: 15px;
     }
-    #woordenlijst #timer,
-    #woordenlijst #totaal {
-      font-size: 16px;
-      margin-bottom: 5px;
-    }
-    ul {
-      list-style-type: none;
-      padding-left: 0;
-    }
-    li {
-      margin-bottom: 6px;
-    }
-    #voortgangContainer {
-      width: 100%;
-      background-color: #444;
-      height: 20px;
-      border-radius: 10px;
-      margin: 10px 0;
-      overflow: hidden;
-    }
-    #voortgangBalk {
-      height: 100%;
-      width: 0%;
-      background-color: #00cc66;
-      transition: width 0.5s ease;
-    }
-    body:not(.dark-mode) #voortgangContainer {
-      background-color: #ccc;
-    }
-    body:not(.dark-mode) #voortgangBalk {
-      background-color: #33aa33;
-    }
-#WinPopup {
+    /* Popup styling */
+    #popup {
       display: none;
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.8);
-      z-index: 9998;
-      text-align: center;
-      color: white;
-      padding-top: 100px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      border: 2px solid #333;
+      padding: 20px;
+      z-index: 1000;
     }
-    #WinPopup div {
-      background: #cc4c99;
-      margin: 0 auto;
-      padding: 30px;
-      border-radius: 20px;
-      width: 500px;
-      box-shadow: 0 0 20px #999;
-    }
-    #vuurwerk {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      pointer-events: none;
-      z-index: 9999;
-    }
-    #vuurwerk div {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      position: absolute;
-      animation: explode 3s ease-out forwards;
-    }
-    @keyframes explode {
-      0% { transform: scale(0); opacity: 1; }
-      100% { transform: scale(3); opacity: 0; }
-    }
-    #bevestigingBox {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      background: #444;
-      color: white;
-      padding: 15px;
-      border-radius: 10px;
-      z-index: 10000;
-      box-shadow: 0 0 10px black;
+    #popup button {
+      margin-top: 10px;
     }
   </style>
 </head>
-<body class="dark-mode">
-  <button id="theme-toggle" onclick="toggleTheme()">🌙 Donker / Licht</button>
+<body>
+  <h1>Het Scheldwiel</h1>
+  <div class="circle-container" id="circle"></div>
+  <input id="invoer" placeholder="Typ een woord">
+  <button onclick="controleerWoord()">Controleer</button>
+  <div id="resultaat"></div>
+  <div id="totaal"></div>
 
-  <div id="spel">
-    <h1>🎨 Het Scheldwiel</h1>
-    <p>Gebruik de letters en zorg dat elk woord de <strong>middelste letter E</strong> bevat. Minstens 3 letters!</p>
-    <div class="circle-container" id="woordwiel"></div>
-    <div id="resultaat"></div>
-
-    <input type="text" id="inputwoord" placeholder="Typ een woord..." onkeydown="handleKey(event)" oninput="startTimer(); filterInput()" />
-    <button onclick="controleerWoord(); focusInput();">Controleer</button>
-    <button onclick="togglePause(); focusInput();">⏸️ Pauzeer / Hervat</button>
-    <button onclick="rotateLetters(); focusInput();">🔄 Wissel letters</button>
-    <button onclick="toonHint()">💡 Hint</button>
-    <button onclick="toonOplossing()">🧩 Toon oplossing</button>
-    <button onclick="vraagResetBevestiging()">🔄 Reset spel</button>
+  <!-- Popup -->
+  <div id="popup">
+    <p id="popupText"></p>
+    <button onclick="sluitPopup()">Sluiten</button>
   </div>
 
-  <div id="woordenlijst">
-    <h3>🧠 Gevonden woorden</h3>
-    <div id="voortgangContainer">
-      <div id="voortgangBalk"></div>
-    </div>
-    <div id="timer">Tijd: 0:00</div>
-    <div id="totaal"></div>
-    <ul id="gevonden"></ul>
-  </div>
+<script>
+  // Configuratie zonder centerLetter
+  let outerLetters = ['A','K','O','T','S','R','E','U','M','P','C','H','L'];
+  const letterLimieten = { A:2, K:2, O:3, T:2, S:2, R:2, E:2, U:2, M:1, P:1, C:1, H:1, L:2 };
 
-  <div id="WinPopup">
-    <div>
-      <h2>🎉 Goed gedaan lelijk zwijn!</h2>
-      <p>Je bent echt waardeloos.<br>Loser!</p>
-      <p id="popupTijd" style="margin-top:10px; font-size:16px;"></p>
-      <button onclick="sluitWinPopup()">Sluiten</button>
-    </div>
-  </div>
-  <div id="vuurwerk"></div>
+  const woordenUitleg = {
+    'lul':'Vlaams/Nederlands: mannelijke geslachtsdeel, ook als scheldwoord',
+    'loser':'Engels: verliezer, gebruikt als belediging',
+    'penis':'Beledigend gebruikt voor mannelijke geslachtsdeel',
+    'kut':'Vulgair scheldwoord, algemeen gebruikt',
+    'kloot':'Belediging of uitroep, vergelijkbaar met klootzak',
+    'klootzak':'Grove belediging, letterlijk zak met kloten',
+    'zak':'Smalend voor waardeloos persoon',
+    'vetzak':'Belediging voor dikke persoon',
+    'paljas':'Vlaams: clown, dommerik',
+    'scharel':'Vlaams: losse relatie, smalend gebruikt',
+    'vuurtoren':'Spotnaam, smalend voor iemand met rood haar',
+    'ginger':'Engels: smalend voor roodharige',
+    'homo':'Beledigend gebruikt voor homoseksueel',
+    'smeerlap':'Viezerik, smalend',
+    'kutwijf':'Vulgair scheldwoord voor vrouw',
+    'wijf':'Beledigend voor vrouw',
+    'hoer':'Beledigend voor prostituee',
+    'slet':'Beledigend voor losbandige vrouw',
+    'sletbak':'Variant van slet, grove belediging',
+    'slettebak':'Meervoud/variant van slet, grove belediging',
+    'matras':'Beledigend voor vrouw, seksueel beschikbaar',
+    'kuthoer':'Vulgair scheldwoord voor prostituee',
+    'wortel':'Spotnaam voor roodharige',
+    'makak':'Beledigend, iemand vergelijken met aap',
+    'fucker':'Engels: grove belediging',
+    'slut':'Engels: losbandige vrouw, smalend',
+    'whore':'Engels: prostituee, smalend',
+    'crackwhore':'Engels: prostituee verslaafd aan drugs',
+    'crackhoer':'Nederlands variant van crackwhore',
+    'krakhoer':'Variant, grove belediging',
+    'dick':'Engels: penis, ook als scheldwoord',
+    'lummel':'Onhandige, sullige kerel',
+    'ploert':'Smalend voor gemene kerel',
+    'schurk':'Beledigend voor misdadiger',
+    'schoft':'Beledigend voor gemene kerel',
+    'pummel':'Onhandige, sullige kerel',
+    'gekapt':'Smalend, iemand die stopt of afhaakt',
+    'retard':'Engels: grove belediging voor dom persoon',
+    'mongool':'Beledigend, smalend voor iemand met beperking',
+    'autist':'Beledigend gebruikt voor iemand met autisme',
+    'gay':'Engels: smalend voor homoseksueel',
+    'trut':'Beledigend voor vervelende vrouw',
+    'kloothommel':'Grove Vlaamse belediging',
+    'tyfus':'Beledigend, ziekte gebruikt als krachtterm',
+    'oetlul':'Vlaams/Nederlands: dommerik, grove belediging'
+  };
 
-  <script>
-    function toggleTheme() {
-      document.body.classList.toggle('dark-mode');
+  let gevondenWoorden = [];
+
+  // Letters rond de cirkel tekenen
+  function tekenLetters() {
+    const circle = document.getElementById('circle');
+    const n = outerLetters.length;
+    outerLetters.forEach((letter, i) => {
+      const angle = (2 * Math.PI / n) * i;
+      const x = 230 + 180 * Math.cos(angle); // grotere radius
+      const y = 230 + 180 * Math.sin(angle);
+      const div = document.createElement('div');
+      div.className = 'letter';
+      div.style.left = x + 'px';
+      div.style.top = y + 'px';
+      div.textContent = letter;
+      circle.appendChild(div);
+    });
+  }
+
+  function controleerWoord() {
+    const invoer = document.getElementById('invoer').value.toLowerCase();
+    const resultaat = document.getElementById('resultaat');
+
+    if (invoer.length < 3 || invoer.length > 25) {
+      resultaat.innerText = "❌ Lengte moet tussen 3 en 25 letters zijn.";
+      return;
     }
 
-    function focusInput() {
-      document.getElementById('inputwoord').focus();
+    if (!woordenUitleg[invoer]) {
+      resultaat.innerText = "❌ Geen geldig woord.";
+      return;
     }
 
-    const centerLetter = 'L';
-    let outerLetters = ['A', 'K', 'O', 'T', 'S', 'R', 'E', 'U', 'M', 'P', 'C', 'H'];
-    const letterLimieten = { A: 2, K: 2, O: 3, T: 2, S: 2, R: 2, E: 2, U: 2, M: 1, P: 1, C: 1, H: 1 };
-
-    const woordenUitleg = {
-      'lul': 'Vlaams/Nederlands: mannelijke geslachtsdeel, ook als scheldwoord',
-      'loser': 'Engels: verliezer, gebruikt als belediging',
-      'kut': 'Vulgair scheldwoord, algemeen gebruikt',
-      'kloot': 'Belediging of uitroep, vergelijkbaar met klootzak',
-      'klootzak': 'Grove belediging, letterlijk zak met kloten',
-      'zak': 'Smalend voor waardeloos persoon',
-      'vetzak': 'Belediging voor dikke persoon',
-      'paljas': 'Vlaams: clown, dommerik',
-      'smeerlap': 'Viezerik, smalend',
-      'kutwijf': 'Vulgair scheldwoord voor vrouw',
-      'wijf': 'Beledigend voor vrouw',
-      'hoer': 'Beledigend voor prostituee',
-      'slet': 'Beledigend voor losbandige vrouw',
-      'sletbak': 'Variant van slet, grove belediging',
-      'slettebak': 'Meervoud/variant van slet, grove belediging',
-      'matras': 'Beledigend voor vrouw, seksueel beschikbaar',
-      'kuthoer': 'Vulgair scheldwoord voor prostituee',
-      'makak': 'Beledigend, iemand vergelijken met aap',
-      'ploert': 'Smalend voor gemene kerel',
-      'schurk': 'Beledigend voor misdadiger',
-      'schoft': 'Beledigend voor gemene kerel',
-      'pummel': 'Onhandige, sullige kerel',
-      'retard': 'Engels: grove belediging voor dom persoon',
-      'mongool': 'Beledigend, smalend voor iemand met beperking',
-      'trut': 'Beledigend voor vervelende vrouw',
-      'kloothommel': 'Grove Vlaamse belediging'
-    };
-
-    let gevondenWoorden = [];
-    let score = 0;
-    let seconden = 0;
-    let timerStarted = false;
-    let timerPaused = false;
-    let timerInterval;
-    let hintIndex = 0;
-    let hintsGebruikt = 0;
-    let vuurwerkInterval;
-    let klikGeschiedenis = [];
-function renderLetters() {
-      const container = document.getElementById('woordwiel');
-      container.innerHTML = '';
-
-      const centerDiv = document.createElement('div');
-      centerDiv.className = 'letter center';
-      centerDiv.setAttribute('data-letter', centerLetter);
-      centerDiv.setAttribute('data-id', 'center');
-      centerDiv.textContent = centerLetter;
-      centerDiv.onclick = () => toggleLetter(centerLetter, 'center');
-      container.appendChild(centerDiv);
-
-      const total = outerLetters.length;
-      outerLetters.forEach((letter, i) => {
-        const angle = (360 / total) * i;
-        const div = document.createElement('div');
-        div.className = 'letter';
-        div.setAttribute('data-letter', letter);
-        div.setAttribute('data-id', `outer-${i}`);
-        div.style.setProperty('--angle', angle + 'deg');
-        div.textContent = letter;
-        div.onclick = () => toggleLetter(letter, `outer-${i}`);
-        container.appendChild(div);
-      });
-
-      document.getElementById('totaal').innerText = `Woorden gevonden: ${gevondenWoorden.length} / ${Object.keys(woordenUitleg).length}`;
+    if (gevondenWoorden.includes(invoer)) {
+      resultaat.innerText = "❌ Al gevonden.";
+      return;
     }
 
-    function toggleLetter(letter, id) {
-      const lower = letter.toLowerCase();
-      const max = letterLimieten[letter.toUpperCase()] || 0;
-      const index = klikGeschiedenis.findIndex(k => k.letter === lower && k.id === id);
+    gevondenWoorden.push(invoer);
+    resultaat.innerText = "✅ " + woordenUitleg[invoer];
+    document.getElementById('totaal').innerText =
+      `Woorden gevonden: ${gevondenWoorden.length} / ${Object.keys(woordenUitleg).length}`;
 
-      if (index !== -1) {
-        klikGeschiedenis.splice(index, 1);
-      } else {
-        const huidigeAantal = klikGeschiedenis.filter(k => k.letter === lower).length;
-        if (huidigeAantal < max) {
-          klikGeschiedenis.push({ letter: lower, id });
-        }
-      }
+    // Popup tonen bij succes
+    toonPopup("Goed gedaan lelijk zwijn. Je bent waardeloos...... Loser.");
+  }
 
-      document.getElementById('inputwoord').value = klikGeschiedenis.map(k => k.letter).join('');
-      updateLetterHighlights();
-      startTimer();
-    }
+  function toonPopup(tekst) {
+    document.getElementById('popupText').innerText = tekst;
+    document.getElementById('popup').style.display = 'block';
+  }
 
-    function updateLetterHighlights() {
-      const letters = document.querySelectorAll('.letter');
-      letters.forEach(el => el.classList.remove('highlight'));
+  function sluitPopup() {
+    document.getElementById('popup').style.display = 'none';
+  }
 
-      klikGeschiedenis.forEach(k => {
-        if (k.id) {
-          const el = document.querySelector(`.letter[data-id="${k.id}"]`);
-          if (el) el.classList.add('highlight');
-        }
-      });
-    }
-
-    function filterInput() {
-      const input = document.getElementById('inputwoord');
-      let waarde = input.value.toLowerCase().replace(/[^a-z]/g, '');
-      let telling = {};
-      klikGeschiedenis = [];
-
-      for (let letter of waarde) {
-        const upper = letter.toUpperCase();
-        if (!letterLimieten[upper]) continue;
-        telling[upper] = (telling[upper] || 0) + 1;
-        if (telling[upper] <= letterLimieten[upper]) {
-          const alle = Array.from(document.querySelectorAll(`.letter[data-letter="${upper}"]`));
-          const alGebruikt = klikGeschiedenis.map(k => k.id);
-          const beschikbaar = alle.find(el => !alGebruikt.includes(el.getAttribute('data-id')));
-          const id = beschikbaar ? beschikbaar.getAttribute('data-id') : null;
-          klikGeschiedenis.push({ letter, id });
-        }
-      }
-
-      input.value = klikGeschiedenis.map(k => k.letter).join('');
-      updateLetterHighlights();
-    }
-
-    function rotateLetters() {
-      outerLetters = outerLetters.sort(() => Math.random() - 0.5);
-      klikGeschiedenis = [];
-      document.getElementById('inputwoord').value = '';
-      updateLetterHighlights();
-      renderLetters();
-      focusInput();
-    }
-
-    function toonBevestiging(tekst, bevestigActie, annuleerActie) {
-      const bestaande = document.getElementById('bevestigingBox');
-      if (bestaande) bestaande.remove();
-
-      const box = document.createElement('div');
-      box.id = 'bevestigingBox';
-      box.innerHTML = `
-        <p>${tekst}</p>
-        <button id="jaBtn">✅ Ja</button>
-        <button id="neeBtn">❌ Nee</button>
-      `;
-      document.body.appendChild(box);
-
-      document.getElementById('jaBtn').onclick = () => {
-        box.remove();
-        bevestigActie();
-      };
-      document.getElementById('neeBtn').onclick = () => {
-        box.remove();
-        if (annuleerActie) annuleerActie();
-      };
-
-      setTimeout(() => {
-        if (document.body.contains(box)) {
-          box.remove();
-          if (annuleerActie) annuleerActie();
-        }
-      }, 10000);
-    }
-
-    function toonHint() {
-      toonBevestiging("Weet je zeker dat je een hint wilt?", () => {
-        voerHintUit();
-        focusInput();
-      }, () => {});
-    }
-
-    function toonOplossing() {
-      toonBevestiging("Weet je zeker dat je de oplossing wilt tonen?", () => {
-        toonBevestiging("Echt zeker? Dit toont alle antwoorden!", () => {
-          voerOplossingUit();
-          focusInput();
-        }, () => {});
-      }, () => {});
-    }
-
-    function vraagResetBevestiging() {
-      toonBevestiging("Weet je zeker dat je het spel wilt resetten?", () => {
-        resetSpel();
-        focusInput();
-      }, () => {});
-    }
-
-    function updateVoortgang() {
-      const totaal = Object.keys(woordenUitleg).length;
-      const gevonden = gevondenWoorden.length;
-      const percentage = Math.round((gevonden / totaal) * 100);
-      document.getElementById('voortgangBalk').style.width = percentage + '%';
-    }
-function controleerWoord() {
-      const invoer = klikGeschiedenis.map(k => k.letter).join('');
-      const resultaat = document.getElementById('resultaat');
-      const lijst = document.getElementById('gevonden');
-
-      if (invoer.length < 3) {
-        resultaat.innerText = "❌ Minstens 3 letters!";
-        return;
-      }
-
-      if (!invoer.includes(centerLetter.toLowerCase())) {
-        resultaat.innerText = `❌ Moet de letter '${centerLetter}' bevatten!`;
-        return;
-      }
-
-      const telling = {};
-      for (let letter of invoer) {
-        const upper = letter.toUpperCase();
-        if (!letterLimieten[upper]) {
-          resultaat.innerText = "❌ Ongeldige letter!";
-          return;
-        }
-        telling[upper] = (telling[upper] || 0) + 1;
-        if (telling[upper] > letterLimieten[upper]) {
-          resultaat.innerText = `❌ Te veel van de letter '${upper}' gebruikt!`;
-          return;
-        }
-      }
-
-      if (woordenUitleg[invoer]) {
-        if (!gevondenWoorden.includes(invoer)) {
-          gevondenWoorden.push(invoer);
-          score++;
-          document.getElementById('totaal').innerText = `Woorden gevonden: ${gevondenWoorden.length} / ${Object.keys(woordenUitleg).length}`;
-          const uitleg = woordenUitleg[invoer];
-          const nieuwItem = document.createElement('li');
-          nieuwItem.innerText = `${invoer} (${uitleg})`;
-          lijst.appendChild(nieuwItem);
-
-          const lengte = invoer.length;
-          if (lengte >= 5 && lengte <= 12) {
-            resultaat.innerText = `✅ ${lengte}-letterwoord gevonden!`;
-          } else {
-            resultaat.innerText = '';
-          }
-
-          updateVoortgang();
-          klikGeschiedenis = [];
-          document.getElementById('inputwoord').value = '';
-          updateLetterHighlights();
-          if (gevondenWoorden.length === Object.keys(woordenUitleg).length) {
-            toonWinPopup();
-          }
-        } else {
-          resultaat.innerText = "ℹ️ Dat woord heb je al gevonden.";
-        }
-      } else {
-        resultaat.innerText = "❌ Geen geldig woord in deze puzzel.";
-      }
-      focusInput();
-    }
-
-    function voerHintUit() {
-      const resterend = Object.keys(woordenUitleg).filter(w => !gevondenWoorden.includes(w));
-      if (resterend.length > 0) {
-        const hintWoord = resterend[hintIndex % resterend.length];
-        const uitleg = woordenUitleg[hintWoord];
-        const lijst = document.getElementById('gevonden');
-        const nieuwItem = document.createElement('li');
-        nieuwItem.innerText = `🔆 ${hintWoord} (${uitleg})`;
-        lijst.appendChild(nieuwItem);
-        gevondenWoorden.push(hintWoord);
-        score++;
-        hintsGebruikt++;
-        document.getElementById('totaal').innerText = `Woorden gevonden: ${gevondenWoorden.length} / ${Object.keys(woordenUitleg).length}`;
-        document.getElementById('resultaat').innerText = '';
-        updateVoortgang();
-        hintIndex++;
-        klikGeschiedenis = [];
-        updateLetterHighlights();
-        if (gevondenWoorden.length === Object.keys(woordenUitleg).length) {
-          toonWinPopup();
-        }
-      }
-      focusInput();
-    }
-
-    function voerOplossingUit() {
-      const lijst = document.getElementById('gevonden');
-      const resterend = Object.keys(woordenUitleg).filter(w => !gevondenWoorden.includes(w));
-      resterend.forEach(w => {
-        const uitleg = woordenUitleg[w];
-        const nieuwItem = document.createElement('li');
-        nieuwItem.innerText = `🧩 ${w} (${uitleg})`;
-        lijst.appendChild(nieuwItem);
-        gevondenWoorden.push(w);
-        score++;
-      });
-      document.getElementById('totaal').innerText = `Woorden gevonden: ${gevondenWoorden.length} / ${Object.keys(woordenUitleg).length}`;
-      document.getElementById('resultaat').innerText = '';
-      updateVoortgang();
-      klikGeschiedenis = [];
-      updateLetterHighlights();
-      if (gevondenWoorden.length === Object.keys(woordenUitleg).length) {
-        toonWinPopup();
-      }
-      focusInput();
-    }
-
-    function startTimer() {
-      if (!timerStarted) {
-        timerStarted = true;
-        timerInterval = setInterval(() => {
-          if (!timerPaused) {
-            seconden++;
-            const min = Math.floor(seconden / 60);
-            const sec = seconden % 60;
-            document.getElementById('timer').innerText = `Tijd: ${min}:${sec.toString().padStart(2, '0')}`;
-          }
-        }, 1000);
-      }
-    }
-
-    function togglePause() {
-      timerPaused = !timerPaused;
-    }
-
-    function handleKey(e) {
-      if (e.key === 'Enter') {
-        controleerWoord();
-        document.getElementById('inputwoord').value = '';
-        klikGeschiedenis = [];
-        updateLetterHighlights();
-      }
-    }
-
-    function resetSpel() {
-      gevondenWoorden = [];
-      score = 0;
-      seconden = 0;
-      timerStarted = false;
-      timerPaused = false;
-      hintIndex = 0;
-      hintsGebruikt = 0;
-      klikGeschiedenis = [];
-      clearInterval(timerInterval);
-      document.getElementById('inputwoord').value = '';
-      document.getElementById('gevonden').innerHTML = '';
-      document.getElementById('totaal').innerText = `Woorden gevonden: 0 / ${Object.keys(woordenUitleg).length}`;
-      document.getElementById('timer').innerText = "Tijd: 0:00";
-      document.getElementById('resultaat').innerText = '';
-      document.getElementById('voortgangBalk').style.width = '0%';
-      updateLetterHighlights();
-      renderLetters();
-      focusInput();
-    }
-
-    function toonWinPopup() {
-      document.getElementById('WinPopup').style.display = 'block';
-      clearInterval(timerInterval);
-      timerPaused = true;
-
-      const min = Math.floor(seconden / 60);
-      const sec = seconden % 60;
-      document.getElementById('popupTijd').innerText = `⏱️ Je tijd: ${min}:${sec.toString().padStart(2, '0')}`;
-
-      vuurwerkInterval = setInterval(vuurwerkAnimatie, 1000);
-    }
-
-    function sluitWinPopup() {
-      document.getElementById('WinPopup').style.display = 'none';
-      clearInterval(vuurwerkInterval);
-      document.getElementById('vuurwerk').innerHTML = '';
-    }
-
-    function vuurwerkAnimatie() {
-      const container = document.getElementById('vuurwerk');
-      for (let i = 0; i < 20; i++) {
-        const dot = document.createElement('div');
-        dot.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
-        dot.style.top = Math.random() * window.innerHeight + 'px';
-        dot.style.left = Math.random() * window.innerWidth + 'px';
-        dot.style.width = '10px';
-        dot.style.height = '10px';
-        dot.style.borderRadius = '50%';
-        dot.style.position = 'absolute';
-        dot.style.animation = 'explode 3s ease-out forwards';
-        container.appendChild(dot);
-        setTimeout(() => dot.remove(), 3000);
-      }
-    }
-
-    window.onload = () => {
-      renderLetters();
-      focusInput();
-    };
-  </script>
+  tekenLetters();
+  document.getElementById('totaal').innerText =
+    `Woorden gevonden: 0 / ${Object.keys(woordenUitleg).length}`;
+</script>
 </body>
 </html>
-
-
