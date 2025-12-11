@@ -2,7 +2,7 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
-  <title>Het Scheldwiel</title>
+  <title>Het Scheldwiel</title> <!-- Correcte sluiting van de <title> -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
@@ -143,7 +143,7 @@
     body:not(.dark-mode) #voortgangBalk {
       background-color: #33aa33;
     }
-#janPopup {
+    #janPopup {
       display: none;
       position: fixed;
       top: 0; left: 0;
@@ -198,7 +198,7 @@
 
   <div id="spel">
     <h1>🎨 Het Scheldwiel</h1>
-    <p>Gebruik de letters en zorg dat elk woord de <strong>middelste letter E</strong> bevat. Minstens 4 letters!</p>
+    <p>Gebruik de letters en zorg dat elk woord de <strong>middelste letter E</strong> bevat. Minstens 3 letters!</p>
     <div class="circle-container" id="woordwiel"></div>
     <div id="resultaat"></div>
 
@@ -240,417 +240,354 @@
       document.getElementById('inputwoord').focus();
     }
 
-    const centerLetter = 'L';
+    const centerLetter = 'E';
     let outerLetters = ['A','B','C','D','E','F','G','H','I','K','M','N','O','P','R','S','T','U','V','W','Y','Z'];
-    const letterLimieten = {  A: 2, B: 1, C: 1, D: 1, E: 2, F: 1, G: 1, H: 1, I: 1, K: 2, L: 3, M: 1, N: 1, O: 3, P: 1, R: 2, S: 2, T: 2, U: 1, V: 1, W: 1, Y: 1, Z: 1 };
+    const letterLimieten = { A: 2, B: 1, C: 1, D: 1, E: 2, F: 1, G: 1, H: 1, I: 1, K: 2, L: 3, M: 1, N: 1, O: 3, P: 1, R: 2, S: 2, T: 2, U: 1, V: 1, W: 1, Y: 1, Z: 1 };
 
-    const woordenUitleg = {
-    'lul': 'Vlaams/Nederlands: mannelijke geslachtsdeel, ook als scheldwoord',
-    'loser': 'Engels: verliezer, gebruikt als belediging',
-    'penis': 'Beledigend gebruikt voor mannelijke geslachtsdeel',
-    'kut': 'Vulgair scheldwoord, algemeen gebruikt',
-    'kloot': 'Belediging of uitroep, vergelijkbaar met klootzak',
-    'klootzak': 'Grove belediging, letterlijk zak met kloten',
-    'zak': 'Smalend voor waardeloos persoon',
-    'vetzak': 'Belediging voor dikke persoon',
-    'paljas': 'Vlaams: clown, dommerik',
-    'scharel': 'Vlaams: losse relatie, smalend gebruikt',
-    'vuurtoren': 'Spotnaam, smalend voor iemand met rood haar',
-    'ginger': 'Engels: smalend voor roodharige',
-    'homo': 'Beledigend gebruikt voor homoseksueel',
-    'smeerlap': 'Viezerik, smalend',
-    'kutwijf': 'Vulgair scheldwoord voor vrouw',
-    'wijf': 'Beledigend voor vrouw',
-    'hoer': 'Beledigend voor prostituee',
-    'slet': 'Beledigend voor losbandige vrouw',
-    'sletbak': 'Variant van slet, grove belediging',
-    'slettebak': 'Meervoud/variant van slet, grove belediging',
-    'matras': 'Beledigend voor vrouw, seksueel beschikbaar',
-    'kuthoer': 'Vulgair scheldwoord voor prostituee',
-    'wortel': 'Spotnaam voor roodharige',
-    'makak': 'Beledigend, iemand vergelijken met aap',
-    'fucker': 'Engels: grove belediging',
-    'slut': 'Engels: losbandige vrouw, smalend',
-    'whore': 'Engels: prostituee, smalend',
-    'crackwhore': 'Engels: prostituee verslaafd aan drugs',
-    'crackhoer': 'Nederlands variant van crackwhore',
-    'krakhoer': 'Variant, grove belediging',
-    'dick': 'Engels: penis, ook als scheldwoord',
-    'lummel': 'Onhandige, sullige kerel',
-    'ploert': 'Smalend voor gemene kerel',
-    'schurk': 'Beledigend voor misdadiger',
-    'schoft': 'Beledigend voor gemene kerel',
-    'pummel': 'Onhandige, sullige kerel',
-    'gekapt': 'Smalend, iemand die stopt of afhaakt',
-    'retard': 'Engels: grove belediging voor dom persoon',
-    'mongool': 'Beledigend, smalend voor iemand met beperking',
-    'autist': 'Beledigend gebruikt voor iemand met autisme',
-    'gay': 'Engels: smalend voor homoseksueel',
-    'trut': 'Beledigend voor vervelende vrouw',
-    'kloothommel': 'Grove Vlaamse belediging'
-    };
+let gevondenWoorden = [];
+let score = 0;
+let seconden = 0;
+let timerStarted = false;
+let timerPaused = false;
+let timerInterval;
+let hintIndex = 0;
+let hintsGebruikt = 0;
+let vuurwerkInterval;
+let klikGeschiedenis = [];
 
-    let gevondenWoorden = [];
-    let score = 0;
-    let seconden = 0;
-    let timerStarted = false;
-    let timerPaused = false;
-    let timerInterval;
-    let hintIndex = 0;
-    let hintsGebruikt = 0;
-    let vuurwerkInterval;
-    let klikGeschiedenis = [];
 function renderLetters() {
-      const container = document.getElementById('woordwiel');
-      container.innerHTML = '';
+  const container = document.getElementById('woordwiel');
+  container.innerHTML = '';
 
-      const centerDiv = document.createElement('div');
-      centerDiv.className = 'letter center';
-      centerDiv.setAttribute('data-letter', centerLetter);
-      centerDiv.setAttribute('data-id', 'center');
-      centerDiv.textContent = centerLetter;
-      centerDiv.onclick = () => toggleLetter(centerLetter, 'center');
-      container.appendChild(centerDiv);
+  const centerDiv = document.createElement('div');
+  centerDiv.className = 'letter center';
+  centerDiv.setAttribute('data-letter', centerLetter);
+  centerDiv.setAttribute('data-id', 'center');
+  centerDiv.textContent = centerLetter;
+  centerDiv.onclick = () => toggleLetter(centerLetter, 'center');
+  container.appendChild(centerDiv);
 
-      const total = outerLetters.length;
-      outerLetters.forEach((letter, i) => {
-        const angle = (360 / total) * i;
-        const div = document.createElement('div');
-        div.className = 'letter';
-        div.setAttribute('data-letter', letter);
-        div.setAttribute('data-id', `outer-${i}`);
-        div.style.setProperty('--angle', angle + 'deg');
-        div.textContent = letter;
-        div.onclick = () => toggleLetter(letter, `outer-${i}`);
-        container.appendChild(div);
-      });
+  const total = outerLetters.length;
+  outerLetters.forEach((letter, i) => {
+    const angle = (360 / total) * i;
+    const div = document.createElement('div');
+    div.className = 'letter';
+    div.setAttribute('data-letter', letter);
+    div.setAttribute('data-id', `outer-${i}`);
+    div.style.setProperty('--angle', angle + 'deg');
+    div.textContent = letter;
+    div.onclick = () => toggleLetter(letter, `outer-${i}`);
+    container.appendChild(div);
+  });
 
-      document.getElementById('totaal').innerText = `Woorden gevonden: ${gevondenWoorden.length} / ${Object.keys(woordenUitleg).length}`;
+  document.getElementById('totaal').innerText = `Woorden gevonden: ${gevondenWoorden.length} / ${Object.keys(woordenUitleg).length}`;
+}
+
+function toggleLetter(letter, id) {
+  const lower = letter.toLowerCase();
+  const max = letterLimieten[letter.toUpperCase()] || 0;
+  const index = klikGeschiedenis.findIndex(k => k.letter === lower && k.id === id);
+
+  if (index !== -1) {
+    klikGeschiedenis.splice(index, 1);
+  } else {
+    const huidigeAantal = klikGeschiedenis.filter(k => k.letter === lower).length;
+    if (huidigeAantal < max) {
+      klikGeschiedenis.push({ letter: lower, id });
     }
+  }
 
-    function toggleLetter(letter, id) {
-      const lower = letter.toLowerCase();
-      const max = letterLimieten[letter.toUpperCase()] || 0;
-      const index = klikGeschiedenis.findIndex(k => k.letter === lower && k.id === id);
+  document.getElementById('inputwoord').value = klikGeschiedenis.map(k => k.letter).join('');
+  updateLetterHighlights();
+  startTimer();
+}
 
-      if (index !== -1) {
-        klikGeschiedenis.splice(index, 1);
-      } else {
-        const huidigeAantal = klikGeschiedenis.filter(k => k.letter === lower).length;
-        if (huidigeAantal < max) {
-          klikGeschiedenis.push({ letter: lower, id });
-        }
-      }
+function updateLetterHighlights() {
+  const letters = document.querySelectorAll('.letter');
+  letters.forEach(el => el.classList.remove('highlight'));
 
-      document.getElementById('inputwoord').value = klikGeschiedenis.map(k => k.letter).join('');
-      updateLetterHighlights();
-      startTimer();
+  klikGeschiedenis.forEach(k => {
+    if (k.id) {
+      const el = document.querySelector(`.letter[data-id="${k.id}"]`);
+      if (el) el.classList.add('highlight');
     }
+  });
+}
 
-    function updateLetterHighlights() {
-      const letters = document.querySelectorAll('.letter');
-      letters.forEach(el => el.classList.remove('highlight'));
+function filterInput() {
+  const input = document.getElementById('inputwoord');
+  let waarde = input.value.toLowerCase().replace(/[^a-z]/g, '');
+  let telling = {};
+  klikGeschiedenis = [];
 
-      klikGeschiedenis.forEach(k => {
-        if (k.id) {
-          const el = document.querySelector(`.letter[data-id="${k.id}"]`);
-          if (el) el.classList.add('highlight');
-        }
-      });
+  for (let letter of waarde) {
+    const upper = letter.toUpperCase();
+    if (!letterLimieten[upper]) continue;
+    telling[upper] = (telling[upper] || 0) + 1;
+    if (telling[upper] <= letterLimieten[upper]) {
+      const alle = Array.from(document.querySelectorAll(`.letter[data-letter="${upper}"]`));
+      const alGebruikt = klikGeschiedenis.map(k => k.id);
+      const beschikbaar = alle.find(el => !alGebruikt.includes(el.getAttribute('data-id')));
+      const id = beschikbaar ? beschikbaar.getAttribute('data-id') : null;
+      klikGeschiedenis.push({ letter, id });
     }
+  }
 
-    function filterInput() {
-      const input = document.getElementById('inputwoord');
-      let waarde = input.value.toLowerCase().replace(/[^a-z]/g, '');
-      let telling = {};
-      klikGeschiedenis = [];
+  input.value = klikGeschiedenis.map(k => k.letter).join('');
+  updateLetterHighlights();
+}
 
-      for (let letter of waarde) {
-        const upper = letter.toUpperCase();
-        if (!letterLimieten[upper]) continue;
-        telling[upper] = (telling[upper] || 0) + 1;
-        if (telling[upper] <= letterLimieten[upper]) {
-          const alle = Array.from(document.querySelectorAll(`.letter[data-letter="${upper}"]`));
-          const alGebruikt = klikGeschiedenis.map(k => k.id);
-          const beschikbaar = alle.find(el => !alGebruikt.includes(el.getAttribute('data-id')));
-          const id = beschikbaar ? beschikbaar.getAttribute('data-id') : null;
-          klikGeschiedenis.push({ letter, id });
-        }
-      }
+function rotateLetters() {
+  outerLetters = outerLetters.sort(() => Math.random() - 0.5);
+  klikGeschiedenis = [];
+  document.getElementById('inputwoord').value = '';
+  updateLetterHighlights();
+  renderLetters();
+  focusInput();
+}
 
-      input.value = klikGeschiedenis.map(k => k.letter).join('');
-      updateLetterHighlights();
+function toonBevestiging(tekst, bevestigActie, annuleerActie) {
+  const bestaande = document.getElementById('bevestigingBox');
+  if (bestaande) bestaande.remove();
+
+  const box = document.createElement('div');
+  box.id = 'bevestigingBox';
+  box.innerHTML = `
+    <p>${tekst}</p>
+    <button id="jaBtn">✅ Ja</button>
+    <button id="neeBtn">❌ Nee</button>
+  `;
+  document.body.appendChild(box);
+
+  document.getElementById('jaBtn').onclick = () => {
+    box.remove();
+    bevestigActie();
+  };
+  document.getElementById('neeBtn').onclick = () => {
+    box.remove();
+    if (annuleerActie) annuleerActie();
+  };
+
+  setTimeout(() => {
+    if (document.body.contains(box)) {
+      box.remove();
+      if (annuleerActie) annuleerActie();
     }
+  }, 10000);
+}
 
-    function rotateLetters() {
-      outerLetters = outerLetters.sort(() => Math.random() - 0.5);
-      klikGeschiedenis = [];
-      document.getElementById('inputwoord').value = '';
-      updateLetterHighlights();
-      renderLetters();
+function toonHint() {
+  toonBevestiging("Weet je zeker dat je een hint wilt?", () => {
+    voerHintUit();
+    focusInput();
+  }, () => {});
+}
+
+function toonOplossing() {
+  toonBevestiging("Weet je zeker dat je de oplossing wilt tonen?", () => {
+    toonBevestiging("Echt zeker? Dit toont alle antwoorden!", () => {
+      voerOplossingUit();
       focusInput();
-    }
+    }, () => {});
+  }, () => {});
+}
 
-    function toonBevestiging(tekst, bevestigActie, annuleerActie) {
-      const bestaande = document.getElementById('bevestigingBox');
-      if (bestaande) bestaande.remove();
+function vraagResetBevestiging() {
+  toonBevestiging("Weet je zeker dat je het spel wilt resetten?", () => {
+    resetSpel();
+    focusInput();
+  }, () => {});
+}
 
-      const box = document.createElement('div');
-      box.id = 'bevestigingBox';
-      box.innerHTML = `
-        <p>${tekst}</p>
-        <button id="jaBtn">✅ Ja</button>
-        <button id="neeBtn">❌ Nee</button>
-      `;
-      document.body.appendChild(box);
+function updateVoortgang() {
+  const totaal = Object.keys(woordenUitleg).length;
+  const gevonden = gevondenWoorden.length;
+  const percentage = Math.round((gevonden / totaal) * 100);
+  document.getElementById('voortgangBalk').style.width = percentage + '%';
+}
 
-      document.getElementById('jaBtn').onclick = () => {
-        box.remove();
-        bevestigActie();
-      };
-      document.getElementById('neeBtn').onclick = () => {
-        box.remove();
-        if (annuleerActie) annuleerActie();
-      };
-
-      setTimeout(() => {
-        if (document.body.contains(box)) {
-          box.remove();
-          if (annuleerActie) annuleerActie();
-        }
-      }, 10000);
-    }
-
-    function toonHint() {
-      toonBevestiging("Weet je zeker dat je een hint wilt?", () => {
-        voerHintUit();
-        focusInput();
-      }, () => {});
-    }
-
-    function toonOplossing() {
-      toonBevestiging("Weet je zeker dat je de oplossing wilt tonen?", () => {
-        toonBevestiging("Echt zeker? Dit toont alle antwoorden!", () => {
-          voerOplossingUit();
-          focusInput();
-        }, () => {});
-      }, () => {});
-    }
-
-    function vraagResetBevestiging() {
-      toonBevestiging("Weet je zeker dat je het spel wilt resetten?", () => {
-        resetSpel();
-        focusInput();
-      }, () => {});
-    }
-
-    function updateVoortgang() {
-      const totaal = Object.keys(woordenUitleg).length;
-      const gevonden = gevondenWoorden.length;
-      const percentage = Math.round((gevonden / totaal) * 100);
-      document.getElementById('voortgangBalk').style.width = percentage + '%';
-    }
 function controleerWoord() {
-      const invoer = klikGeschiedenis.map(k => k.letter).join('');
-      const resultaat = document.getElementById('resultaat');
-      const lijst = document.getElementById('gevonden');
+  const invoer = klikGeschiedenis.map(k => k.letter).join('');
+  const resultaat = document.getElementById('resultaat');
+  const lijst = document.getElementById('gevonden');
 
-      if (invoer.length < 3) {
-        resultaat.innerText = "❌ Minstens 3 letters!";
-        return;
-      }
+  if (invoer.length < 3) {
+    resultaat.innerText = "❌ Minstens 3 letters!";
+    return;
+  }
 
-      if (!invoer.includes(centerLetter.toLowerCase())) {
-        resultaat.innerText = `❌ Moet de letter '${centerLetter}' bevatten!`;
-        return;
-      }
+  if (!invoer.includes(centerLetter.toLowerCase())) {
+    resultaat.innerText = `❌ Moet de letter '${centerLetter}' bevatten!`;
+    return;
+  }
 
-      const telling = {};
-      for (let letter of invoer) {
-        const upper = letter.toUpperCase();
-        if (!letterLimieten[upper]) {
-          resultaat.innerText = "❌ Ongeldige letter!";
-          return;
-        }
-        telling[upper] = (telling[upper] || 0) + 1;
-        if (telling[upper] > letterLimieten[upper]) {
-          resultaat.innerText = `❌ Te veel van de letter '${upper}' gebruikt!`;
-          return;
-        }
-      }
-
-      if (woordenUitleg[invoer]) {
-        if (!gevondenWoorden.includes(invoer)) {
-          gevondenWoorden.push(invoer);
-          score++;
-          document.getElementById('totaal').innerText = `Woorden gevonden: ${gevondenWoorden.length} / ${Object.keys(woordenUitleg).length}`;
-          const uitleg = woordenUitleg[invoer];
-          const nieuwItem = document.createElement('li');
-          nieuwItem.innerText = `${invoer} (${uitleg})`;
-          lijst.appendChild(nieuwItem);
-
-          const lengte = invoer.length;
-          if (lengte >= 5 && lengte <= 25) {
-            resultaat.innerText = `✅ ${lengte}-letterwoord gevonden!`;
-          } else {
-            resultaat.innerText = '';
-          }
-
-          updateVoortgang();
-          klikGeschiedenis = [];
-          document.getElementById('inputwoord').value = '';
-          updateLetterHighlights();
-          if (gevondenWoorden.length === Object.keys(woordenUitleg).length) {
-            toonJanPopup();
-          }
-        } else {
-          resultaat.innerText = "ℹ️ Dat woord heb je al gevonden.";
-        }
-      } else {
-        resultaat.innerText = "❌ Geen geldig woord in deze puzzel.";
-      }
-      focusInput();
+  const telling = {};
+  for (let letter of invoer) {
+    const upper = letter.toUpperCase();
+    if (!letterLimieten[upper]) {
+      resultaat.innerText = "❌ Ongeldige letter!";
+      return;
     }
-
-    function voerHintUit() {
-      const resterend = Object.keys(woordenUitleg).filter(w => !gevondenWoorden.includes(w));
-      if (resterend.length > 0) {
-        const hintWoord = resterend[hintIndex % resterend.length];
-        const uitleg = woordenUitleg[hintWoord];
-        const lijst = document.getElementById('gevonden');
-        const nieuwItem = document.createElement('li');
-        nieuwItem.innerText = `🔆 ${hintWoord} (${uitleg})`;
-        lijst.appendChild(nieuwItem);
-        gevondenWoorden.push(hintWoord);
-        score++;
-        hintsGebruikt++;
-        document.getElementById('totaal').innerText = `Woorden gevonden: ${gevondenWoorden.length} / ${Object.keys(woordenUitleg).length}`;
-        document.getElementById('resultaat').innerText = '';
-        updateVoortgang();
-        hintIndex++;
-        klikGeschiedenis = [];
-        updateLetterHighlights();
-        if (gevondenWoorden.length === Object.keys(woordenUitleg).length) {
-          toonJanPopup();
-        }
-      }
-      focusInput();
+    telling[upper] = (telling[upper] || 0) + 1;
+    if (telling[upper] > letterLimieten[upper]) {
+      resultaat.innerText = `❌ Te veel van de letter '${upper}' gebruikt!`;
+      return;
     }
+  }
 
-    function voerOplossingUit() {
-      const lijst = document.getElementById('gevonden');
-      const resterend = Object.keys(woordenUitleg).filter(w => !gevondenWoorden.includes(w));
-      resterend.forEach(w => {
-        const uitleg = woordenUitleg[w];
-        const nieuwItem = document.createElement('li');
-        nieuwItem.innerText = `🧩 ${w} (${uitleg})`;
-        lijst.appendChild(nieuwItem);
-        gevondenWoorden.push(w);
-        score++;
-      });
+  if (woordenUitleg[invoer]) {
+    if (!gevondenWoorden.includes(invoer)) {
+      gevondenWoorden.push(invoer);
+      score++;
       document.getElementById('totaal').innerText = `Woorden gevonden: ${gevondenWoorden.length} / ${Object.keys(woordenUitleg).length}`;
-      document.getElementById('resultaat').innerText = '';
+      const uitleg = woordenUitleg[invoer];
+      const nieuwItem = document.createElement('li');
+      nieuwItem.innerText = `${invoer} (${uitleg})`;
+      lijst.appendChild(nieuwItem);
+
+      const lengte = invoer.length;
+      if (lengte >= 5 && lengte <= 25) {
+        resultaat.innerText = `✅ ${lengte}-letterwoord gevonden!`;
+      } else {
+        resultaat.innerText = '';
+      }
+
       updateVoortgang();
       klikGeschiedenis = [];
+      document.getElementById('inputwoord').value = '';
       updateLetterHighlights();
       if (gevondenWoorden.length === Object.keys(woordenUitleg).length) {
         toonJanPopup();
       }
-      focusInput();
+    } else {
+      resultaat.innerText = "ℹ️ Dat woord heb je al gevonden.";
     }
+  } else {
+    resultaat.innerText = "❌ Geen geldig woord in deze puzzel.";
+  }
+  focusInput();
+}
 
-    function startTimer() {
-      if (!timerStarted) {
-        timerStarted = true;
-        timerInterval = setInterval(() => {
-          if (!timerPaused) {
-            seconden++;
-            const min = Math.floor(seconden / 60);
-            const sec = seconden % 60;
-            document.getElementById('timer').innerText = `Tijd: ${min}:${sec.toString().padStart(2, '0')}`;
-          }
-        }, 1000);
+function voerHintUit() {
+  const resterend = Object.keys(woordenUitleg).filter(w => !gevondenWoorden.includes(w));
+  if (resterend.length > 0) {
+    const hintWoord = resterend[hintIndex % resterend.length];
+    const uitleg = woordenUitleg[hintWoord];
+        const lijst = document.getElementById('gevonden');
+    hintsGebruikt++;
+    hintIndex++;
+    document.getElementById('resultaat').innerText = `💡 Hint: ${hintWoord} (${uitleg})`;
+    updateVoortgang();
+  } else {
+    document.getElementById('resultaat').innerText = "❌ Geen hints meer beschikbaar!";
+  }
+}
+
+function voerOplossingUit() {
+  const lijst = document.getElementById('gevonden');
+  for (let woord in woordenUitleg) {
+    if (!gevondenWoorden.includes(woord)) {
+      gevondenWoorden.push(woord);
+      const uitleg = woordenUitleg[woord];
+      const nieuwItem = document.createElement('li');
+      nieuwItem.innerText = `${woord} (${uitleg})`;
+      lijst.appendChild(nieuwItem);
+    }
+  }
+
+  document.getElementById('resultaat').innerText = "✅ Alle antwoorden zijn getoond!";
+  updateVoortgang();
+  focusInput();
+}
+
+function resetSpel() {
+  gevondenWoorden = [];
+  score = 0;
+  seconden = 0;
+  hintsGebruikt = 0;
+  timerPaused = false;
+  klikGeschiedenis = [];
+  clearInterval(timerInterval);
+  document.getElementById('inputwoord').value = '';
+  document.getElementById('resultaat').innerText = '';
+  document.getElementById('gevonden').innerHTML = '';
+  document.getElementById('totaal').innerText = 'Woorden gevonden: 0 / 0';
+  document.getElementById('voortgangBalk').style.width = '0%';
+  renderLetters();
+  startTimer();
+}
+
+function startTimer() {
+  if (!timerStarted || timerPaused) return;
+
+  if (!timerInterval) {
+    timerInterval = setInterval(() => {
+      if (!timerPaused) {
+        seconden++;
+        const minuten = Math.floor(seconden / 60);
+        const resterendeSeconden = seconden % 60;
+        document.getElementById('timer').innerText = `Tijd: ${minuten}:${resterendeSeconden < 10 ? '0' : ''}${resterendeSeconden}`;
       }
-    }
+    }, 1000);
+  }
+}
 
-    function togglePause() {
-      timerPaused = !timerPaused;
-    }
+function togglePause() {
+  timerPaused = !timerPaused;
+  document.getElementById('resultaat').innerText = timerPaused ? "⏸️ Timer gepauzeerd" : "▶️ Timer hervat";
+}
 
-    function handleKey(e) {
-      if (e.key === 'Enter') {
-        controleerWoord();
-        document.getElementById('inputwoord').value = '';
-        klikGeschiedenis = [];
-        updateLetterHighlights();
-      }
-    }
+function toonJanPopup() {
+  const popup = document.getElementById('janPopup');
+  popup.style.display = 'block';
 
-    function resetSpel() {
-      gevondenWoorden = [];
-      score = 0;
-      seconden = 0;
-      timerStarted = false;
-      timerPaused = false;
-      hintIndex = 0;
-      hintsGebruikt = 0;
-      klikGeschiedenis = [];
-      clearInterval(timerInterval);
-      document.getElementById('inputwoord').value = '';
-      document.getElementById('gevonden').innerHTML = '';
-      document.getElementById('totaal').innerText = `Woorden gevonden: 0 / ${Object.keys(woordenUitleg).length}`;
-      document.getElementById('timer').innerText = "Tijd: 0:00";
-      document.getElementById('resultaat').innerText = '';
-      document.getElementById('voortgangBalk').style.width = '0%';
-      updateLetterHighlights();
-      renderLetters();
-      focusInput();
-    }
+  // Tijd bijhouden van het spel
+  const minuten = Math.floor(seconden / 60);
+  const resterendeSeconden = seconden % 60;
+  document.getElementById('popupTijd').innerText = `Je hebt het spel voltooid in ${minuten}:${resterendeSeconden < 10 ? '0' : ''}${resterendeSeconden}`;
 
-    function toonJanPopup() {
-      document.getElementById('janPopup').style.display = 'block';
-      clearInterval(timerInterval);
-      timerPaused = true;
+  // Vuurwerk animatie
+  vuurwerkInterval = setInterval(createFirework, 300);
 
-      const min = Math.floor(seconden / 60);
-      const sec = seconden % 60;
-      document.getElementById('popupTijd').innerText = `⏱️ Je tijd: ${min}:${sec.toString().padStart(2, '0')}`;
-
-      vuurwerkInterval = setInterval(vuurwerkAnimatie, 1000);
-    }
-
-    function sluitJanPopup() {
-      document.getElementById('janPopup').style.display = 'none';
+  // Voorkom dat de popup meermaals wordt weergegeven
+  setTimeout(() => {
+    if (popup.style.display === 'block') {
+      popup.style.display = 'none';
       clearInterval(vuurwerkInterval);
-      document.getElementById('vuurwerk').innerHTML = '';
     }
+  }, 10000);
+}
 
-    function vuurwerkAnimatie() {
-      const container = document.getElementById('vuurwerk');
-      for (let i = 0; i < 20; i++) {
-        const dot = document.createElement('div');
-        dot.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
-        dot.style.top = Math.random() * window.innerHeight + 'px';
-        dot.style.left = Math.random() * window.innerWidth + 'px';
-        dot.style.width = '10px';
-        dot.style.height = '10px';
-        dot.style.borderRadius = '50%';
-        dot.style.position = 'absolute';
-        dot.style.animation = 'explode 3s ease-out forwards';
-        container.appendChild(dot);
-        setTimeout(() => dot.remove(), 3000);
-      }
-    }
+function sluitJanPopup() {
+  const popup = document.getElementById('janPopup');
+  popup.style.display = 'none';
+  clearInterval(vuurwerkInterval);
+}
 
-    window.onload = () => {
-      renderLetters();
-      focusInput();
-    };
-  </script>
+function createFirework() {
+  const vuurwerkContainer = document.getElementById('vuurwerk');
+  const firework = document.createElement('div');
+  firework.style.backgroundColor = randomColor();
+  firework.style.top = `${Math.random() * 100}%`;
+  firework.style.left = `${Math.random() * 100}%`;
+  firework.style.width = `${Math.random() * 50 + 10}px`;
+  firework.style.height = `${Math.random() * 50 + 10}px`;
+  vuurwerkContainer.appendChild(firework);
+
+  setTimeout(() => {
+    vuurwerk.remove();
+  }, 2000);
+}
+
+function randomColor() {
+  const colors = ['#ff0000', '#ff6600', '#ffcc00', '#33cc33', '#0066cc', '#9933cc'];
+  return colors[Math.floor(Math.random() * colors.length)];
+}
+
+renderLetters();
+startTimer();
+
+</script>
+
 </body>
 </html>
-
-
-
-
-
