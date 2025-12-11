@@ -2,7 +2,7 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
-  <title>Het Scheldwiel</title> <!-- Correcte sluiting van de <title> -->
+  <title>Het Scheldwiel — Gefixt</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
@@ -48,6 +48,7 @@
       width: 250px;
       height: 250px;
       margin: 0 auto 10px auto;
+      border-radius: 50%;
     }
     .letter {
       position: absolute;
@@ -64,6 +65,7 @@
       transition: background-color 0.3s;
       cursor: pointer;
       color: #eee;
+      user-select: none;
     }
     body:not(.dark-mode) .letter {
       background-color: #f0f0f0;
@@ -76,10 +78,6 @@
     }
     body:not(.dark-mode) .center {
       background-color: #66ccff;
-    }
-    .circle-container .letter:not(.center) {
-      top: calc(50% + 150px * sin(var(--angle)));
-      left: calc(50% + 150px * cos(var(--angle)));
     }
     .highlight {
       background-color: #d4a900 !important;
@@ -237,27 +235,79 @@
     }
 
     function focusInput() {
-      document.getElementById('inputwoord').focus();
+      const el = document.getElementById('inputwoord');
+      if (el) el.focus();
     }
 
     const centerLetter = 'E';
     let outerLetters = ['A','B','C','D','E','F','G','H','I','K','M','N','O','P','R','S','T','U','V','W','Y','Z'];
     const letterLimieten = { A: 2, B: 1, C: 1, D: 1, E: 2, F: 1, G: 1, H: 1, I: 1, K: 2, L: 3, M: 1, N: 1, O: 3, P: 1, R: 2, S: 2, T: 2, U: 1, V: 1, W: 1, Y: 1, Z: 1 };
 
-let gevondenWoorden = [];
+    const woordenUitleg = {
+  'lul': 'Vlaams/Nederlands: mannelijke geslachtsdeel, ook als scheldwoord',
+  'loser': 'Engels: verliezer, gebruikt als belediging',
+  'penis': 'Beledigend gebruikt voor mannelijke geslachtsdeel',
+  'kut': 'Vulgair scheldwoord, algemeen gebruikt',
+  'kloot': 'Belediging of uitroep, vergelijkbaar met klootzak',
+  'klootzak': 'Grove belediging, letterlijk zak met kloten',
+  'zak': 'Smalend voor waardeloos persoon',
+  'vetzak': 'Belediging voor dikke persoon',
+  'paljas': 'Vlaams: clown, dommerik',
+  'scharel': 'Vlaams: losse relatie, smalend gebruikt',
+  'vuurtoren': 'Spotnaam, smalend voor iemand met rood haar',
+  'ginger': 'Engels: smalend voor roodharige',
+  'homo': 'Beledigend gebruikt voor homoseksueel',
+  'smeerlap': 'Viezerik, smalend',
+  'kutwijf': 'Vulgair scheldwoord voor vrouw',
+  'wijf': 'Beledigend voor vrouw',
+  'hoer': 'Beledigend voor prostituee',
+  'slet': 'Beledigend voor losbandige vrouw',
+  'sletbak': 'Variant van slet, grove belediging',
+  'slettebak': 'Meervoud/variant van slet, grove belediging',
+  'matras': 'Beledigend voor vrouw, seksueel beschikbaar',
+  'kuthoer': 'Vulgair scheldwoord voor prostituee',
+  'wortel': 'Spotnaam voor roodharige',
+  'makak': 'Beledigend, iemand vergelijken met aap',
+  'fucker': 'Engels: grove belediging',
+  'slut': 'Engels: losbandige vrouw, smalend',
+  'whore': 'Engels: prostituee, smalend',
+  'crackwhore': 'Engels: prostituee verslaafd aan drugs',
+  'crackhoer': 'Nederlands variant van crackwhore',
+  'krakhoer': 'Variant, grove belediging',
+  'dick': 'Engels: penis, ook als scheldwoord',
+  'lummel': 'Onhandige, sullige kerel',
+  'ploert': 'Smalend voor gemene kerel',
+  'schurk': 'Beledigend voor misdadiger',
+  'schoft': 'Beledigend voor gemene kerel',
+  'pummel': 'Onhandige, sullige kerel',
+  'gekapt': 'Smalend, iemand die stopt of afhaakt',
+  'retard': 'Engels: grove belediging voor dom persoon',
+  'mongool': 'Beledigend, smalend voor iemand met beperking',
+  'autist': 'Beledigend gebruikt voor iemand met autisme',
+  'gay': 'Engels: smalend voor homoseksueel',
+  'trut': 'Beledigend voor vervelende vrouw',
+  'kloothommel': 'Grove Vlaamse belediging'
+};
+    // einde woordenUitleg
+
+    let gevondenWoorden = [];
 let score = 0;
 let seconden = 0;
 let timerStarted = false;
 let timerPaused = false;
-let timerInterval;
+let timerInterval = null;
 let hintIndex = 0;
 let hintsGebruikt = 0;
-let vuurwerkInterval;
+let vuurwerkInterval = null;
 let klikGeschiedenis = [];
 
 function renderLetters() {
   const container = document.getElementById('woordwiel');
   container.innerHTML = '';
+
+  const size = container.clientWidth; // 250 per CSS, but use runtime value
+  const center = size / 2;
+  const radius = Math.min(size, container.clientHeight) / 2 - 40; // leave room for letters
 
   const centerDiv = document.createElement('div');
   centerDiv.className = 'letter center';
@@ -265,22 +315,31 @@ function renderLetters() {
   centerDiv.setAttribute('data-id', 'center');
   centerDiv.textContent = centerLetter;
   centerDiv.onclick = () => toggleLetter(centerLetter, 'center');
+  // ensure center is properly centered by CSS (top/left 50%)
   container.appendChild(centerDiv);
 
   const total = outerLetters.length;
   outerLetters.forEach((letter, i) => {
     const angle = (360 / total) * i;
+    const rad = (angle - 90) * Math.PI / 180; // start from top
+    const x = center + radius * Math.cos(rad);
+    const y = center + radius * Math.sin(rad);
+
     const div = document.createElement('div');
     div.className = 'letter';
     div.setAttribute('data-letter', letter);
     div.setAttribute('data-id', `outer-${i}`);
-    div.style.setProperty('--angle', angle + 'deg');
     div.textContent = letter;
+    div.style.left = x + 'px';
+    div.style.top = y + 'px';
     div.onclick = () => toggleLetter(letter, `outer-${i}`);
     container.appendChild(div);
   });
 
   document.getElementById('totaal').innerText = `Woorden gevonden: ${gevondenWoorden.length} / ${Object.keys(woordenUitleg).length}`;
+
+  // Mark that the timer can start when user interacts
+  timerStarted = true;
 }
 
 function toggleLetter(letter, id) {
@@ -338,7 +397,11 @@ function filterInput() {
 }
 
 function rotateLetters() {
-  outerLetters = outerLetters.sort(() => Math.random() - 0.5);
+  // Fisher-Yates shuffle for unbiased random shuffle
+  for (let i = outerLetters.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [outerLetters[i], outerLetters[j]] = [outerLetters[j], outerLetters[i]];
+  }
   klikGeschiedenis = [];
   document.getElementById('inputwoord').value = '';
   updateLetterHighlights();
@@ -473,7 +536,6 @@ function voerHintUit() {
   if (resterend.length > 0) {
     const hintWoord = resterend[hintIndex % resterend.length];
     const uitleg = woordenUitleg[hintWoord];
-        const lijst = document.getElementById('gevonden');
     hintsGebruikt++;
     hintIndex++;
     document.getElementById('resultaat').innerText = `💡 Hint: ${hintWoord} (${uitleg})`;
@@ -507,33 +569,37 @@ function resetSpel() {
   hintsGebruikt = 0;
   timerPaused = false;
   klikGeschiedenis = [];
-  clearInterval(timerInterval);
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = null;
   document.getElementById('inputwoord').value = '';
   document.getElementById('resultaat').innerText = '';
   document.getElementById('gevonden').innerHTML = '';
-  document.getElementById('totaal').innerText = 'Woorden gevonden: 0 / 0';
+  document.getElementById('totaal').innerText = `Woorden gevonden: 0 / ${Object.keys(woordenUitleg).length}`;
+  document.getElementById('timer').innerText = 'Tijd: 0:00';
   document.getElementById('voortgangBalk').style.width = '0%';
   renderLetters();
-  startTimer();
 }
 
 function startTimer() {
-  if (!timerStarted || timerPaused) return;
-
-  if (!timerInterval) {
-    timerInterval = setInterval(() => {
-      if (!timerPaused) {
-        seconden++;
-        const minuten = Math.floor(seconden / 60);
-        const resterendeSeconden = seconden % 60;
-        document.getElementById('timer').innerText = `Tijd: ${minuten}:${resterendeSeconden < 10 ? '0' : ''}${resterendeSeconden}`;
-      }
-    }, 1000);
-  }
+  // Start the timer when called if not already running and not paused.
+  if (timerInterval) return;
+  timerStarted = true;
+  timerPaused = false;
+  timerInterval = setInterval(() => {
+    if (!timerPaused) {
+      seconden++;
+      const minuten = Math.floor(seconden / 60);
+      const resterendeSeconden = seconden % 60;
+      document.getElementById('timer').innerText = `Tijd: ${minuten}:${resterendeSeconden < 10 ? '0' : ''}${resterendeSeconden}`;
+    }
+  }, 1000);
 }
 
 function togglePause() {
   timerPaused = !timerPaused;
+  if (!timerInterval && !timerPaused) {
+    startTimer();
+  }
   document.getElementById('resultaat').innerText = timerPaused ? "⏸️ Timer gepauzeerd" : "▶️ Timer hervat";
 }
 
@@ -549,11 +615,11 @@ function toonJanPopup() {
   // Vuurwerk animatie
   vuurwerkInterval = setInterval(createFirework, 300);
 
-  // Voorkom dat de popup meermaals wordt weergegeven
+  // Sluit na 10s automatisch
   setTimeout(() => {
     if (popup.style.display === 'block') {
       popup.style.display = 'none';
-      clearInterval(vuurwerkInterval);
+      if (vuurwerkInterval) clearInterval(vuurwerkInterval);
     }
   }, 10000);
 }
@@ -561,7 +627,7 @@ function toonJanPopup() {
 function sluitJanPopup() {
   const popup = document.getElementById('janPopup');
   popup.style.display = 'none';
-  clearInterval(vuurwerkInterval);
+  if (vuurwerkInterval) clearInterval(vuurwerkInterval);
 }
 
 function createFirework() {
@@ -575,7 +641,7 @@ function createFirework() {
   vuurwerkContainer.appendChild(firework);
 
   setTimeout(() => {
-    vuurwerk.remove();
+    firework.remove();
   }, 2000);
 }
 
@@ -584,11 +650,17 @@ function randomColor() {
   return colors[Math.floor(Math.random() * colors.length)];
 }
 
-renderLetters();
-startTimer();
+// basic keyboard handler to allow enter to check
+function handleKey(e) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    controleerWoord();
+  }
+}
 
+renderLetters();
+// timer will start on first interaction (click or typing)
 </script>
 
 </body>
 </html>
-
