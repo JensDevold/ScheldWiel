@@ -223,7 +223,7 @@
 
   <div id="janPopup">
     <div>
-      <h2>🎉 Goed gedaan lelijk zwijn</h2>
+      <h2>🎉 Goed gedaan lelijk zwijn!</h2>
       <p>Niemand heeft u graag <br>Loser!</p>
       <p id="popupTijd" style="margin-top:10px; font-size:16px;"></p>
       <button onclick="sluitJanPopup()">Sluiten</button>
@@ -240,37 +240,50 @@
       document.getElementById('inputwoord').focus();
     }
 
-    const centerLetter = 'E';
-    let outerLetters = ['P', 'N', 'S', 'I', 'O', 'E', 'N'];
-    const letterLimieten = { P: 1, E: 2, N: 2, S: 1, I: 1, O: 1 };
+    const centerLetter = 'L';
+    let outerLetters = ['A', 'C', 'D', 'E', 'F', 'I', 'K', 'L', 'M', 'N', 'O', 'R', 'S', 'T', 'U', 'P'];
+    const letterLimieten = { A: 2, C: 1, D: 1, E: 2, F: 1, I: 1, K: 1, L: 2, M: 1, N: 1, O: 2, R: 1, S: 2, T: 2, U: 1, P: 1 };
 
     const woordenUitleg = {
-      'pensioen': 'periode waarin je stopt met werken',
-      'pens': 'buik of ingewanden',
-      'penis': 'mannelijk geslachtsorgaan',
-      'open': 'niet gesloten',
-      'poen': 'informeel voor geld',
-      'peen': 'wortelgroente',
-      'neon': 'edelgas, vaak gebruikt in verlichting',
-      'nies': 'reflex van de neus',
-      'sein': 'signaal of teken',
-      'peis': 'Vlaams woord voor rust of vrede',
-      'openen': 'iets toegankelijk maken of ontgrendelen',
-      'peso': 'munteenheid in Latijns-Amerika',
-      'speen': 'rubberen zuigstuk voor baby’s',
-      'spie': 'wigvormig onderdeel dat iets vastzet of aandrijft',
-      'soep': 'vloeibare maaltijd',
-      'pees': 'verbinding tussen spier en bot',
-      'eisen': 'voorwaarden stellen',
-      'noen': 'oude term voor middaguur',
-      'senne': 'voornaam, ook rivier in Brussel',
-      'penne': 'pastasoort',
-      'neen': 'Vlaams voor “nee”',
-      'eens': 'hetzelfde vinden',
-      'oneens': 'niet akkoord zijn',
-      'poes': 'huisdier, meestal een kat',
-      'snoep': 'ook wel snoepgoed of suikergoed genoemd',
-      'eosine': 'rode kleurstof die vroeger werd gebruikt als ontsmettingsmiddel'
+      'sloef': 'Vlaams: een slappe, kruiperige persoon',
+    'kloot': 'Belediging of uitroep, vergelijkbaar met klootzak',
+    'lulle': 'Vernederende vorm van "lul"',
+    'sleur': 'Vervelende persoon die geen initiatief neemt',
+    'kluts': 'Naïef of onhandig persoon',
+    'klungel': 'Onhandige sukkel',
+    'lamlul': 'Afgeleid van lamzak + lul, beledigend',
+    'sloom': 'Traag of suf persoon',
+    'klats': 'Beledigend voor iemand die klunzig is',
+    'larde': 'Soms gebruikt als scheldwoord voor iemand die vetzakkerig doet',
+    'loser': 'Bekende term voor iemand die faalt of niet succesvol is',
+    'fool': 'Dommerik, wordt in Vlaanderen ook gebruikt',
+    'klamp': 'Beledigend voor een plakkerige of irritante persoon',
+    'slomp': 'Onhandige of trage persoon',
+    'lanta': 'Vlaams scheldwoord, licht beledigend, “lantaarnkop”',
+    'klier': 'Iemand die zeurt of vervelend doet',
+    'flapd': 'Afkorting van flapdrol, domme of naïeve persoon',
+    'loper': 'Iemand die altijd wegloopt of niets durft',
+    'slurf': 'Soms gebruikt als belediging voor iemand met lompe trekjes',
+    'klank': 'Vlaamse scheldterm voor iemand die irritant veel praat',
+    'klomp': 'Sullige, onhandige persoon',
+    'slang': 'Iemand die sluw of verraderlijk is',
+    'laker': 'Beledigend: iemand die slijmt of vleit',
+    'kluit': 'Iemand die domme fouten maakt, of onhandig is',
+    'flauw': 'Iemand die zwak of pover reageert',
+    'slok': 'Licht scheldwoord voor een suffe persoon',
+    'klaps': 'Soms gebruikt om iemand te beledigen als “klaplopertje”',
+    'slamp': 'Vlaams: iemand die sloom en onhandig is',
+    'plomp': 'Iemand die zwaar, log of onhandig is',
+    'pluim': 'Iemand die zich overdreven toont, sarcastisch bedoeld',
+    'lomp': 'Iemand die grof of onhandig overkomt',
+    'klater': 'Iemand die opschept of zich belangrijk voordoet',
+    'slakker': 'Iemand die lui is of niet actief',
+    'klaplop': 'Beledigend voor iemand die makkelijk te beduvelen is',
+    'slater': 'Vlaams: iemand die een suf of lomp gedrag vertoont',
+    'luts': 'Afkorting van lutsers, domme personen',
+    'klap': 'Belediging of uitroep voor onhandige mensen',
+    'slutsel': 'Vlaams: licht scheldwoord voor een sullig persoon',
+    'pluimel': 'Iemand die zich overdreven klein of zwak gedraagt'
     };
 
     let gevondenWoorden = [];
@@ -473,7 +486,7 @@ function controleerWoord() {
           lijst.appendChild(nieuwItem);
 
           const lengte = invoer.length;
-          if (lengte >= 5 && lengte <= 8) {
+          if (lengte >= 5 && lengte <= 10) {
             resultaat.innerText = `✅ ${lengte}-letterwoord gevonden!`;
           } else {
             resultaat.innerText = '';
@@ -632,5 +645,6 @@ function controleerWoord() {
   </script>
 </body>
 </html>
+
 
 
