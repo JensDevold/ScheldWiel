@@ -2,7 +2,7 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
-  <title>Het Wiel van de Lorre</title>
+  <title>Het Scheldwiel/title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
@@ -241,49 +241,53 @@
     }
 
     const centerLetter = 'L';
-    let outerLetters = ['A', 'C', 'D', 'E', 'F', 'I', 'K', 'L', 'M', 'N', 'O', 'R', 'S', 'T', 'U', 'P'];
-    const letterLimieten = { A: 2, C: 1, D: 1, E: 2, F: 1, I: 1, K: 1, L: 2, M: 1, N: 1, O: 2, R: 1, S: 2, T: 2, U: 1, P: 1 };
+    let outerLetters = ['A','B','C','D','E','F','G','H','I','K','M','N','O','P','R','S','T','U','V','W','Y','Z'];
+    const letterLimieten = {  A: 2, B: 1, C: 1, D: 1, E: 2, F: 1, G: 1, H: 1, I: 1, K: 2, L: 3, M: 1, N: 1, O: 3, P: 1, R: 2, S: 2, T: 2, U: 1, V: 1, W: 1, Y: 1, Z: 1 };
 
     const woordenUitleg = {
-      'sloef': 'Vlaams: een slappe, kruiperige persoon',
+    'lul': 'Vlaams/Nederlands: mannelijke geslachtsdeel, ook als scheldwoord',
+    'loser': 'Engels: verliezer, gebruikt als belediging',
+    'penis': 'Beledigend gebruikt voor mannelijke geslachtsdeel',
+    'kut': 'Vulgair scheldwoord, algemeen gebruikt',
     'kloot': 'Belediging of uitroep, vergelijkbaar met klootzak',
-    'lulle': 'Vernederende vorm van "lul"',
-    'sleur': 'Vervelende persoon die geen initiatief neemt',
-    'kluts': 'Naïef of onhandig persoon',
-    'klungel': 'Onhandige sukkel',
-    'lamlul': 'Afgeleid van lamzak + lul, beledigend',
-    'sloom': 'Traag of suf persoon',
-    'klats': 'Beledigend voor iemand die klunzig is',
-    'larde': 'Soms gebruikt als scheldwoord voor iemand die vetzakkerig doet',
-    'loser': 'Bekende term voor iemand die faalt of niet succesvol is',
-    'fool': 'Dommerik, wordt in Vlaanderen ook gebruikt',
-    'klamp': 'Beledigend voor een plakkerige of irritante persoon',
-    'slomp': 'Onhandige of trage persoon',
-    'lanta': 'Vlaams scheldwoord, licht beledigend, “lantaarnkop”',
-    'klier': 'Iemand die zeurt of vervelend doet',
-    'flapd': 'Afkorting van flapdrol, domme of naïeve persoon',
-    'loper': 'Iemand die altijd wegloopt of niets durft',
-    'slurf': 'Soms gebruikt als belediging voor iemand met lompe trekjes',
-    'klank': 'Vlaamse scheldterm voor iemand die irritant veel praat',
-    'klomp': 'Sullige, onhandige persoon',
-    'slang': 'Iemand die sluw of verraderlijk is',
-    'laker': 'Beledigend: iemand die slijmt of vleit',
-    'kluit': 'Iemand die domme fouten maakt, of onhandig is',
-    'flauw': 'Iemand die zwak of pover reageert',
-    'slok': 'Licht scheldwoord voor een suffe persoon',
-    'klaps': 'Soms gebruikt om iemand te beledigen als “klaplopertje”',
-    'slamp': 'Vlaams: iemand die sloom en onhandig is',
-    'plomp': 'Iemand die zwaar, log of onhandig is',
-    'pluim': 'Iemand die zich overdreven toont, sarcastisch bedoeld',
-    'lomp': 'Iemand die grof of onhandig overkomt',
-    'klater': 'Iemand die opschept of zich belangrijk voordoet',
-    'slakker': 'Iemand die lui is of niet actief',
-    'klaplop': 'Beledigend voor iemand die makkelijk te beduvelen is',
-    'slater': 'Vlaams: iemand die een suf of lomp gedrag vertoont',
-    'luts': 'Afkorting van lutsers, domme personen',
-    'klap': 'Belediging of uitroep voor onhandige mensen',
-    'slutsel': 'Vlaams: licht scheldwoord voor een sullig persoon',
-    'pluimel': 'Iemand die zich overdreven klein of zwak gedraagt'
+    'klootzak': 'Grove belediging, letterlijk zak met kloten',
+    'zak': 'Smalend voor waardeloos persoon',
+    'vetzak': 'Belediging voor dikke persoon',
+    'paljas': 'Vlaams: clown, dommerik',
+    'scharel': 'Vlaams: losse relatie, smalend gebruikt',
+    'vuurtoren': 'Spotnaam, smalend voor iemand met rood haar',
+    'ginger': 'Engels: smalend voor roodharige',
+    'homo': 'Beledigend gebruikt voor homoseksueel',
+    'smeerlap': 'Viezerik, smalend',
+    'kutwijf': 'Vulgair scheldwoord voor vrouw',
+    'wijf': 'Beledigend voor vrouw',
+    'hoer': 'Beledigend voor prostituee',
+    'slet': 'Beledigend voor losbandige vrouw',
+    'sletbak': 'Variant van slet, grove belediging',
+    'slettebak': 'Meervoud/variant van slet, grove belediging',
+    'matras': 'Beledigend voor vrouw, seksueel beschikbaar',
+    'kuthoer': 'Vulgair scheldwoord voor prostituee',
+    'wortel': 'Spotnaam voor roodharige',
+    'makak': 'Beledigend, iemand vergelijken met aap',
+    'fucker': 'Engels: grove belediging',
+    'slut': 'Engels: losbandige vrouw, smalend',
+    'whore': 'Engels: prostituee, smalend',
+    'crackwhore': 'Engels: prostituee verslaafd aan drugs',
+    'crackhoer': 'Nederlands variant van crackwhore',
+    'krakhoer': 'Variant, grove belediging',
+    'dick': 'Engels: penis, ook als scheldwoord',
+    'lummel': 'Onhandige, sullige kerel',
+    'ploert': 'Smalend voor gemene kerel',
+    'schurk': 'Beledigend voor misdadiger',
+    'schoft': 'Beledigend voor gemene kerel',
+    'pummel': 'Onhandige, sullige kerel',
+    'gekapt': 'Smalend, iemand die stopt of afhaakt',
+    'retard': 'Engels: grove belediging voor dom persoon',
+    'mongool': 'Beledigend, smalend voor iemand met beperking',
+    'autist': 'Beledigend gebruikt voor iemand met autisme',
+    'gay': 'Engels: smalend voor homoseksueel',
+    'trut': 'Beledigend voor vervelende vrouw',
+    'kloothommel': 'Grove Vlaamse belediging'
     };
 
     let gevondenWoorden = [];
@@ -451,8 +455,8 @@ function controleerWoord() {
       const resultaat = document.getElementById('resultaat');
       const lijst = document.getElementById('gevonden');
 
-      if (invoer.length < 4) {
-        resultaat.innerText = "❌ Minstens 4 letters!";
+      if (invoer.length < 3) {
+        resultaat.innerText = "❌ Minstens 3 letters!";
         return;
       }
 
@@ -486,7 +490,7 @@ function controleerWoord() {
           lijst.appendChild(nieuwItem);
 
           const lengte = invoer.length;
-          if (lengte >= 5 && lengte <= 10) {
+          if (lengte >= 5 && lengte <= 25) {
             resultaat.innerText = `✅ ${lengte}-letterwoord gevonden!`;
           } else {
             resultaat.innerText = '';
@@ -645,6 +649,7 @@ function controleerWoord() {
   </script>
 </body>
 </html>
+
 
 
 
